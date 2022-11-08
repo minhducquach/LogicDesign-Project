@@ -1,16 +1,34 @@
 const { db } = require("../config/firebase");
 
+const count = 10;
+let index = 0;
+
 const addEntry = async (req, res) => {
   const { lat, lon, time } = req.body;
+  const ref = db.collection("entries");
+  if (index == 0) index = (await ref.get()).size;
+  console.log(index);
+  if ((await ref.get()).size >= count) {
+    const firstID = index - count + 1;
+    console.log(firstID);
+    const entry = ref.doc(`entry ${firstID}`);
+    console.log("ok");
+    await entry.delete().catch((err) => {
+      return res.status(400).json({
+        status: "error",
+        message: err.message,
+      });
+    });
+  }
   try {
-    const entry = db.collection("entries").doc();
+    index++;
     const entryObject = {
-      id: entry.id,
+      id: index,
       lat,
       lon,
       time,
     };
-    entry.set(entryObject);
+    ref.doc(`entry ${index}`).set(entryObject);
     res.status(200).send({
       status: "successful",
       message: "entry added successfully",
@@ -27,7 +45,7 @@ const updateEntry = async (req, res) => {
     params: { entryId },
   } = req;
   try {
-    const entry = db.collection("entries").doc(entryId);
+    const entry = db.collection("entries").doc(`entry ${entryId}`);
     const currentData = (await entry.get()).data() || {};
     const entryObject = {
       lat: lat || currentData.lat,
@@ -53,7 +71,7 @@ const updateEntry = async (req, res) => {
 const deleteEntry = async (req, res) => {
   const { entryId } = req.params;
   try {
-    const entry = db.collection("entries").doc(entryId);
+    const entry = db.collection("entries").doc(`entry ${entryId}`);
     await entry.delete().catch((err) => {
       return res.status(400).json({
         status: "error",
@@ -72,8 +90,8 @@ const deleteEntry = async (req, res) => {
 const getAllEntries = async (req, res) => {
   try {
     const allEntries = [];
-    const query = await db.collection("entries").get();
-    query.forEach((doc) => {
+    const querySnapshot = await db.collection("entries").get();
+    querySnapshot.forEach((doc) => {
       allEntries.push(doc.data());
     });
     return res.status(200).json(allEntries);
