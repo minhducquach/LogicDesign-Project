@@ -104,9 +104,27 @@ const getEntries = async (req, res) => {
   }
 };
 
+const getFirstEntry = async (req, res) => {
+  try {
+    const entry = [];
+    const querySnapshot = await db
+      .collection("entries")
+      .orderBy("id", "desc")
+      .limit(1)
+      .get();
+    querySnapshot.forEach((doc) => {
+      entry.push(doc.data());
+    });
+    return res.status(200).json(entry);
+  } catch (err) {
+    return res.status(500).json(err.message);
+  }
+};
+
 module.exports = {
   // addEntry,
   // updateEntry,
   // deleteEntry,
   getEntries,
+  getFirstEntry,
 };
