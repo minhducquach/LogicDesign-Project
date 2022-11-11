@@ -117,9 +117,9 @@ body {
 .italic {
   font-style: italic;
 }
-.img1 {
-  max-width: 80%;
-  max-height: 80%px;
+.map {
+  max-width: 90%;
+  max-height: 90%;
   display: flex;
   object-fit: contain;
 }
@@ -133,7 +133,7 @@ body {
 }
 .p1,
 .p2 {
-  font-size: 25px;
+  font-size: 20px;
 }
 .p3,
 .p4 {
@@ -141,19 +141,29 @@ body {
 }
 .Grid {
   display: grid;
-  grid-template-columns: 600px auto;
-  grid-template-rows: 200px auto 50px;
+  grid-template-columns: auto;
+  grid-template-rows: 500px auto 50px;
   grid-template-areas:
-    "p1 p2"
-    "img1 map"
-    "p3 p4";
+    "p2"
+    "map"
+    "p4";
   background-color: #c7fee0;
   align-items: center;
   padding: 0px;
 }
 .center {
   display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 90%;
+  margin-left: 500px;
+  margin-right: 400px;
+  width: 100%;
+}
+.transbox {
+  font-size: 25px;
+  text-align: center;
+  padding: 20px;
+  background-color: transparent;
+  opacity: 1;
+}
+#list-tab {
+  background-color: transparent;
 }

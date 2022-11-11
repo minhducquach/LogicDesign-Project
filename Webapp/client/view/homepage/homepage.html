@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="intial.css">
+    <link rel="stylesheet" href="homepage.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,21 +44,64 @@
         </div>
     </header>
 
-    <div class="Grid">
-            <p class="p1">
+    <div class="Grid d-flex ">
+            <!-- <p class="p1"> 
               Hello, the person you are finding has just visited this place:<br />
-              <span class="bold italic"><button type="button" class="btn btn-primary">Click to take address</button> </span>
-            </p>
+              <span class="bold italic"><button type="button" class="btn btn-primary">Click to update address</button> </span>
+            </p> -->
             <p class="p2">
-              <span class="bold italic">Latitude:</span><br />
-              <span class="bold italic">Longitude:</span><br />
-              <span class="bold italic">Time:</span><br />
+              Hello, the person you are finding has just visited this place:<br />
+              <span class="bold italic"><button type="button" class="btn btn-primary">Click to update address</button> </span><br/>
+              <span class="bold italic">Latitude: <span id="x">x0</span></span><br />
+              <span class="bold italic">Longitude: <span id="y">y0</span></span><br />
+              <span class="bold italic">Time: <span id="t">t0</span></span><br />
             </p>
-            <img1><img class="center" src="update_image.webp" width="600px" height="500px"/></img1>
-            <map><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.0925678826734!2d106.80281137580825!3d10.8805637572626!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3174d8a5568c997f%3A0xdeac05f17a166e0c!2sHo%20Chi%20Minh%20city%20University%20of%20Technology!5e0!3m2!1sen!2s!4v1668149743095!5m2!1sen!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <!-- <img1><img class="center" src="update_image.webp" width="600px" height="500px"/></img1> -->
+            <map class="d-flex  container "><div class="row">
+              <div class="col justify-content-start">
+                <br>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.0925678826734!2d
+              106.80281137580825!3d
+              10.8805637572626!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3174d8a5568c997f%3A0xdeac05f17a166e0c!2sHo%20Chi%20Minh%20city%20University%20of%20Technology
+              !5e0!3m2!1sen!2s!4v1668149743095!5m2!1sen!2s" width="600" height="450" style="border:0;" allowfullscreen="" 
+              loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+              <p class="p4 d-flex justify-content-center">Location on Google Maps</p>
+              </div>
+              <div class="col">
+                <span class="col  justify-content-center">Recent requested location</span>
+                <div class="row justify-content-center">
+                  <div class="col-16 transbox">
+                    <div class="list-group" id="list-tab" role="tablist">
+                      <a class="list-group-item list-group-item-action active" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home" 
+                      onclick="document.getElementById('x').innerHTML =
+                      'x1'">1</a>
+                      <a class="list-group-item list-group-item-action" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="list-profile"
+                      onclick="document.getElementById('x').innerHTML =
+                      'x2'">2</a>
+                      <a class="list-group-item list-group-item-action" id="list-messages-list" data-bs-toggle="list" href="#list-messages" role="tab" aria-controls="list-messages"
+                      onclick="document.getElementById('x').innerHTML =
+                      'x3'">3</a>
+                      <a class="list-group-item list-group-item-action" id="list-settings-list" data-bs-toggle="list" href="#list-settings" role="tab" aria-controls="list-settings"
+                      onclick="document.getElementById('x').innerHTML =
+                      'x4'">4</a>
+                      <a class="list-group-item list-group-item-action" id="list-messages-list" data-bs-toggle="list" href="#list-messages" role="tab" aria-controls="list-messages"
+                      onclick="document.getElementById('x').innerHTML =
+                      'x5'">5</a>
+                      <a class="list-group-item list-group-item-action" id="list-settings-list" data-bs-toggle="list" href="#list-settings" role="tab" aria-controls="list-settings"
+                      onclick="document.getElementById('x').innerHTML =
+                      'x6'">6</a>
+                      <a class="list-group-item list-group-item-action" id="list-messages-list" data-bs-toggle="list" href="#list-messages" role="tab" aria-controls="list-messages"
+                      onclick="document.getElementById('x').innerHTML =
+                      'x7'">7</a>
+                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+              </div>
             </map>
-            <p class="p3">Street View</p>
-            <p class="p4">Location on Google Maps</p>
+            <!-- <p class="p3">Street View</p> -->
+            
     </div>
     
       
