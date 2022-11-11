@@ -1,0 +1,40 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-family: 'Poppins', sans-serif;
+    --height-nav: 70px;
+}
+
+body {
+    background-color: #fff;
+}
+
+/* Body section */
+
+.body {
+    background-color: #C7FEE0;
+    height: calc(100vh - var(--height-nav));
+    margin-top: var(--height-nav);
+    font-size: 2rem;
+    font-weight: 700;
+    padding-top: calc(2.5*var(--height-nav));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.body .content-1, .body .content-2 {
+    font-weight: 100;
+}
+
+.body .click {
+    padding-top: 50px;
+}
+.body .click:hover {
+    color: #7DA87B;
+    cursor: pointer;
+}

@@ -1,0 +1,32 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-family: 'Poppins', sans-serif;
+    --height-nav: 70px;
+}
+
+body {
+    background-color: #fff;
+}
+
+/* Body section */
+.body-error {
+    background-color: #C7FEE0;
+    height: calc(100vh - var(--height-nav));
+    margin-top: var(--height-nav);
+    font-size: 2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    padding-top: calc(2.5*var(--height-nav));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.body .content-1-error{
+    font-size: 5rem;
+}
