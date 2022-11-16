@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+<link href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" rel="stylesheet"/>
     <link rel="stylesheet" href="homepage.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -60,12 +62,32 @@
             <map class="d-flex  container "><div class="row">
               <div class="col justify-content-start">
                 <br>
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.0925678826734!2d
-              106.80281137580825!3d
-              10.8805637572626!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3174d8a5568c997f%3A0xdeac05f17a166e0c!2sHo%20Chi%20Minh%20city%20University%20of%20Technology
-              !5e0!3m2!1sen!2s!4v1668149743095!5m2!1sen!2s" width="600" height="450" style="border:0;" allowfullscreen="" 
-              loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-              <p class="p4 d-flex justify-content-center">Location on Google Maps</p>
+                <div id="osm-map"></div>
+                <script>
+                  // Where you want to render the map.
+                  var element = document.getElementById('osm-map');
+                  
+                  // Height has to be set. You can do this in CSS too.
+                  element.style = 'height:450px; width:600px';
+                  
+                  // Create Leaflet map on map element.
+                  var map = L.map(element);
+                  
+                  // Add OSM tile layer to the Leaflet map.
+                  L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                  }).addTo(map);
+                  
+                  // Target's GPS coordinates.
+                  var target = L.latLng('10.8', '106.8');
+                  
+                  // Set map's center to target with zoom 14.
+                  map.setView(target, 14);
+                  
+                  // Place a marker on the same location.
+                  L.marker(target).addTo(map);
+                  </script>
+              <p class="p4 d-flex justify-content-center">Location on Maps</p>
               </div>
               <div class="col">
                 <span class="col  justify-content-center">Recent requested location</span>
@@ -73,8 +95,8 @@
                   <div class="col-16 transbox">
                     <div class="list-group" id="list-tab" role="tablist">
                       <a class="list-group-item list-group-item-action active" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home" 
-                      onclick="document.getElementById('x').innerHTML =
-                      'x1'">1</a>
+                      onclick="document.getElementById('osm-map').target =
+                      L.latLng('11', '105')">11 105</a>
                       <a class="list-group-item list-group-item-action" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="list-profile"
                       onclick="document.getElementById('x').innerHTML =
                       'x2'">2</a>
