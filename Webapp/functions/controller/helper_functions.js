@@ -93,7 +93,7 @@ const getEntries = async (req, res) => {
     const querySnapshot = await db
       .collection("entries")
       .orderBy("id", "desc")
-      .limit(10)
+      .limit(7)
       .get();
     querySnapshot.forEach((doc) => {
       allEntries.push(doc.data());

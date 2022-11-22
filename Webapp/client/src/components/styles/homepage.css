@@ -35,14 +35,16 @@ body {
   display: flex;
   object-fit: contain;
 }
-.p1, .p2, .img1, .map, .p3, .p4 {
+.p1, .p2, .img1, .map, .p4 {
   text-align: center;
 }
 .p1, .p2 {
   font-size: 25px;
 }
-.p3, .p4 {
+.p4 {
+  padding-top: 30px;
   font-size: 20px;
+  padding-left: 180px;
 }
 .Grid {
   display: grid;
@@ -56,9 +58,69 @@ body {
   align-items: center;
   padding: 0px;
 }
+
 .center {
   display: block;
   margin-left: auto;
   margin-right: auto;
   width: 90%;
 }
+
+.leaflet-container {
+  margin-left: 110px;
+  width: 550px;
+  height: 355px;
+  border: 0;
+}
+
+p.p1 {
+  padding-left: 200px;
+}
+p.p1 .Button {
+  margin-top: 30px;
+}
+
+p.p2 {
+  padding-right: 100px;
+  height: 143px;
+}
+
+div.transbox {
+  font-size: 22.5px;
+  text-align: center;
+  padding: 20px;
+  background-color: transparent;
+  opacity: 1;
+  padding-top: 0;
+}
+
+#list-tab {
+  background-color: transparent;
+}
+
+.col .size {
+  font-size: 20px;
+  text-align: center;
+  margin-left: 350px;
+}
+
+.transbox, .p2 {
+  display: block;
+}
+
+div.row {
+  width: 600px;
+  align-items: center;
+  margin-left: 190px;
+}
+
+span.size{
+  height: 30px;
+  padding-left: 30px;
+  padding-top: 0px;
+}
+
+div.col {
+  height: 437.2px;
+}
+
