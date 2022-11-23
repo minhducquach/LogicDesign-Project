@@ -32,9 +32,18 @@ body {
 }
 
 .body .click {
-    padding-top: 50px;
+    padding-top: 20px;
+    background-color: #C7FEE0;
+    border: 0px;
+    height: 50px;
 }
-.body .click:hover {
+
+a#none{
     color: #7DA87B;
+    text-decoration: none;
+}
+
+.body .click:hover {
+    color: rgb(46, 63, 39);
     cursor: pointer;
 }
