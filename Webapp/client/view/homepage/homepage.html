@@ -45,7 +45,6 @@
             <a href="" class="pandt"><i class="fa-solid fa-bars"></i></a>
         </div>
     </header>
-
     <div class="Grid d-flex ">
             <!-- <p class="p1"> 
               Hello, the person you are finding has just visited this place:<br />
@@ -53,7 +52,7 @@
             </p> -->
             <p class="p2">
               Hello, the person you are finding has just visited this place:<br />
-              <span class="bold italic"><button type="button" class="btn btn-primary">Click to update address</button> </span><br/>
+              <span class="bold italic"><button type="button" class="btn btn-primary" onClick="updateLocationAndTime();window.location.reload();">Click to update address</button> </span><br/>
               <span class="bold italic">Latitude: <span id="x">x0</span></span><br />
               <span class="bold italic">Longitude: <span id="y">y0</span></span><br />
               <span class="bold italic">Time: <span id="t">t0</span></span><br />
@@ -64,6 +63,8 @@
                 <br>
                 <div id="osm-map"></div>
                 <script>
+                  function myFunc(){
+                    var x='10.8',y='106.8';
                   // Where you want to render the map.
                   var element = document.getElementById('osm-map');
                   
@@ -79,14 +80,22 @@
                   }).addTo(map);
                   
                   // Target's GPS coordinates.
-                  var target = L.latLng('10.8', '106.8');
+                  var target = L.latLng('10.8','105');
                   
                   // Set map's center to target with zoom 14.
                   map.setView(target, 14);
                   
                   // Place a marker on the same location.
                   L.marker(target).addTo(map);
+                  }
+                  myFun();
+                  function updateLocationAndTime() {
+                      x='11';
+                      y='105';
+                      myFunc();
+                  }
                   </script>
+
               <p class="p4 d-flex justify-content-center">Location on Maps</p>
               </div>
               <div class="col">
