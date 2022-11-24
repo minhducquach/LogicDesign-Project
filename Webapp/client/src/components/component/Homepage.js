@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo, useRef } from 'react';
 //import OSmap from './OSmap';
 import axios from 'axios';
 import {MapContainer, TileLayer, Map, useMap, Marker, Popup} from 'react-leaflet';
-import L from 'leaflet'
+import L, { map } from 'leaflet'
 
 export default function Homepage () {
 
@@ -57,7 +57,8 @@ export default function Homepage () {
     function handleOnSetView() {
         const { current = {} } = mapRef;
         const { leafletElement: map } = current;
-        map.setView([data[i].lat, data[i].lon], 14);
+        map.setView(new L.LatLng(data[i].lat, data[i]), 14);
+        console.log("HandleOnSetView()");
     }
 
     const markerIcon = new L.Icon({
@@ -110,7 +111,7 @@ export default function Homepage () {
                     <span>Latitude: <span className="bold italic"> {data[i].lat} </span> </span> <br/>
                     <span>Longitude: <span className="bold italic"> {data[i].lon} </span> </span> <br/>
                     <span>Time: <span className="bold italic"> {
-                        formatDate(new Date(data[i].time._seconds * 1000)) + ' ' + formatTime(new Date(data[i].time._seconds * 1000))
+                        data[i].time._seconds < 10000 ? formatDate(new Date(data[i].time._seconds * 1000)) + ' ' + formatTime(new Date(data[i].time._seconds * 1000)) : 0
                     } </span> </span> <br/>
                 </p>
 
@@ -136,30 +137,30 @@ export default function Homepage () {
                                 <a className="list-group-item list-group-item-action active" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home" onClick={() => {
                                     handleOnSetView();
                                     setI(0);
-                                }}>Time : {formatDate(new Date(data[0].time._seconds * 1000)) + ' ' + formatTime(new Date(data[0].time._seconds * 1000))}</a>
+                                }}>Time : {data[0].time._seconds < 10000 ? formatDate(new Date(data[0].time._seconds * 1000)) + ' ' + formatTime(new Date(data[0].time._seconds * 1000)) : 0}</a>
                                 <a className="list-group-item list-group-item-action" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="list-profile" onClick={() => {
                                     handleOnSetView();
                                     setI(1);
-                                }}>Time: {formatDate(new Date(data[1].time._seconds * 1000)) + ' ' + formatTime(new Date(data[1].time._seconds * 1000))}</a>
+                                }}>Time: {data[1].time._seconds < 10000 ? formatDate(new Date(data[1].time._seconds * 1000)) + ' ' + formatTime(new Date(data[1].time._seconds * 1000)) : 0}</a>
                                 <a className="list-group-item list-group-item-action" id="list-messages-list" data-bs-toggle="list" href="#list-messages" role="tab" aria-controls="list-messages" onClick={() => {
                                     handleOnSetView();
                                     setI(2);
-                                }}>Time: {formatDate(new Date(data[2].time._seconds * 1000)) + ' ' + formatTime(new Date(data[2].time._seconds * 1000))} </a>
+                                }}>Time: {data[2].time._seconds < 10000 ? formatDate(new Date(data[2].time._seconds * 1000)) + ' ' + formatTime(new Date(data[2].time._seconds * 1000)) : 0} </a>
                                 <a className="list-group-item list-group-item-action" id="list-settings-list" data-bs-toggle="list" href="#list-settings" role="tab" aria-controls="list-settings" onClick={() => {
                                     handleOnSetView();
                                     setI(3);
-                                }}>Time: {formatDate(new Date(data[3].time._seconds * 1000)) + ' ' + formatTime(new Date(data[3].time._seconds * 1000))} </a>
+                                }}>Time: {data[3].time._seconds < 10000 ? formatDate(new Date(data[3].time._seconds * 1000)) + ' ' + formatTime(new Date(data[3].time._seconds * 1000)) : 0} </a>
                                 <a className="list-group-item list-group-item-action" id="list-messages-list" data-bs-toggle="list" href="#list-messages" role="tab" aria-controls="list-messages" onClick={() => {
                                     handleOnSetView();
                                     setI(4);
-                                }}>Time: {formatDate(new Date(data[4].time._seconds * 1000)) + ' ' + formatTime(new Date(data[4].time._seconds * 1000))}</a>
+                                }}>Time: {data[4].time._seconds < 10000 ? formatDate(new Date(data[4].time._seconds * 1000)) + ' ' + formatTime(new Date(data[4].time._seconds * 1000)) : 0}</a>
                                 <a className="list-group-item list-group-item-action" id="list-settings-list" data-bs-toggle="list" href="#list-settings" role="tab" aria-controls="list-settings" onClick={() => {
                                     handleOnSetView();
                                     setI(5);
-                                }}>Time: {formatDate(new Date(data[5].time._seconds * 1000)) + ' ' + formatTime(new Date(data[5].time._seconds * 1000))}</a>
+                                }}>Time: {data[5].time._seconds < 10000 ? formatDate(new Date(data[5].time._seconds * 1000)) + ' ' + formatTime(new Date(data[5].time._seconds * 1000)) : 0}</a>
                                 <a className="list-group-item list-group-item-action" id="list-messages-list" data-bs-toggle="list" href="#list-messages" role="tab" aria-controls="list-messages" onClick={() => {
                                     setI(6)
-                                }}>Time: {formatDate(new Date(data[6].time._seconds * 1000)) + ' ' + formatTime(new Date(data[6].time._seconds * 1000))}</a>
+                                }}>Time: {data[6].time._seconds < 10000 ? formatDate(new Date(data[6].time._seconds * 1000)) + ' ' + formatTime(new Date(data[6].time._seconds * 1000)) : 0}</a>
                             </div>
                         </div>
                     </div>
