@@ -33,28 +33,46 @@ SoftwareSerial ss(RXPin, TXPin);
 int count = 0;
 
 void setup() {
-  ss.begin(GPSBaud);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    delay(300);
-  }
-  /* Assign the api key (required) */
-  config.api_key = API_KEY;
+    Serial.begin(115200);
+    ss.begin(GPSBaud);
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    Serial.print("Connecting to Wi-Fi");
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        Serial.print(".");
+        delay(300);
+    }
+    Serial.println();
+    Serial.print("Connected with IP: ");
+    Serial.println(WiFi.localIP());
+    Serial.println();
 
-  /* Assign the user sign in credentials */
-  auth.user.email = USER_EMAIL;
-  auth.user.password = USER_PASSWORD;
+    Serial.printf("Firebase Client v%s\n\n", FIREBASE_CLIENT_VERSION);
 
-  /* Assign the callback function for the long running token generation task */
-  config.token_status_callback = tokenStatusCallback; // see addons/TokenHelper.h
+    /* Assign the api key (required) */
+    config.api_key = API_KEY;
 
-  // Limit the size of response payload to be collected in FirebaseData
-  fbdo.setResponseSize(2048);
+    /* Assign the user sign in credentials */
+    auth.user.email = USER_EMAIL;
+    auth.user.password = USER_PASSWORD;
 
-  Firebase.begin(&config, &auth);
+    /* Assign the callback function for the long running token generation task */
+    config.token_status_callback = tokenStatusCallback; // see addons/TokenHelper.h
 
-  Firebase.reconnectWiFi(true);
+#if defined(ESP8266)
+    // In ESP8266 required for BearSSL rx/tx buffer for large data handle, increase Rx size as needed.
+    fbdo.setBSSLBufferSize(2048 /* Rx buffer size in bytes from 512 - 16384 */, 2048 /* Tx buffer size in bytes from 512 - 16384 */);
+#endif
+    
+    // Limit the size of response payload to be collected in FirebaseData
+    fbdo.setResponseSize(2048);
+
+    Firebase.begin(&config, &auth);
+
+    Firebase.reconnectWiFi(true);
+
+    // For sending payload callback
+    // config.cfs.upload_callback = fcsUploadCallback;
 }
 
 void loop() {
@@ -78,9 +96,15 @@ void loop() {
       content.set("fields/lat/stringValue", String(gps.location.lat(), 6));
       content.set("fields/lon/stringValue", String(gps.location.lng(), 6));
 
+      count++;
       if (Firebase.Firestore.createDocument(&fbdo, FIREBASE_PROJECT_ID, "" /* databaseId can be (default) or empty */, documentPath.c_str(), content.raw())){
-        count++;
-        delay(60000);
+        Serial.printf("ok\n%s\n\n", fbdo.payload().c_str());
+        delay(10000);
+      }
+      else {
+        Serial.printf("payloadLength, %d\n", fbdo.payloadLength());
+        Serial.printf("maxPayloadLength, %d\n", fbdo.maxPayloadLength());
+        Serial.println(fbdo.errorReason());
       }
     }
   }

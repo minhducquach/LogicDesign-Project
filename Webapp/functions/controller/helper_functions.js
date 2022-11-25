@@ -89,14 +89,34 @@ let index = 0;
 
 const getEntries = async (req, res) => {
   try {
+    let count = 0;
+    let prevDoc;
     const allEntries = [];
     const querySnapshot = await db
       .collection("data")
       .orderBy("id", "desc")
-      .limit(7)
+      // .limit(7)
       .get();
     querySnapshot.forEach((doc) => {
-      allEntries.push(doc.data());
+      // if (
+      //   (count == 0 && count < 7) ||
+      //   (count < 7 && prevDoc.time != doc.data().time)
+      // ) {
+      //   console.log(doc.data().time + "vs" + prevDoc.time);
+      //   allEntries.push(doc.data());
+      //   prevDoc = doc.data();
+      //   count++;
+      // }
+      if (count == 0) {
+        prevDoc = doc.data();
+        allEntries.push(doc.data());
+        count++;
+      } else if (count < 7 && prevDoc.lat != doc.data().lat) {
+        // console.log(doc.data().time + "vs" + prevDoc.time);
+        allEntries.push(doc.data());
+        prevDoc = doc.data();
+        count++;
+      }
     });
     return res.status(200).json(allEntries);
   } catch (err) {
