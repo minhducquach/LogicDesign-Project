@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
-import { Navigate, useNavigate, Link } from 'react-router-dom';
-import Homepage from './Homepage';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Intial () {
     return (
