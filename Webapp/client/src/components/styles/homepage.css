@@ -81,8 +81,9 @@ p.p1 .Button {
 }
 
 p.p2 {
-  padding-left: 50px;
+  margin-left: 185px;
   height: 143px;
+  width: 600px;
 }
 
 div.transbox {
@@ -124,3 +125,7 @@ div.col {
   height: 437.2px;
 }
 
+.p2.address {
+  padding-bottom: 10px;
+  width: 500px;
+}

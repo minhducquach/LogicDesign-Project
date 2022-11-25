@@ -91,7 +91,7 @@ const getEntries = async (req, res) => {
   try {
     const allEntries = [];
     const querySnapshot = await db
-      .collection("entries")
+      .collection("data")
       .orderBy("id", "desc")
       .limit(7)
       .get();
@@ -108,7 +108,7 @@ const getFirstEntry = async (req, res) => {
   try {
     const entry = [];
     const querySnapshot = await db
-      .collection("entries")
+      .collection("data")
       .orderBy("id", "desc")
       .limit(1)
       .get();

@@ -1,15 +1,9 @@
-import React, { useState, useRef } from "react";
-//import OSmap from './OSmap';
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
-import Geocode from "react-geocode";
 
-Geocode.setApiKey("https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyDyo1s1Ol2veFp9z5p569iEaoroxGG9DfY");
-Geocode.setLanguage("en");
-Geocode.setRegion("vie");
-Geocode.setLocationType("ROOFTOP");
-Geocode.enableDebug();
+let flag = 0;
 
 export default function Homepage() {
   let array = [
@@ -60,42 +54,26 @@ export default function Homepage() {
   const [data, setData] = useState(array.reverse());
   const [i, setI] = useState(0);
 
-  let flag = 0;
-
   const mapRef = useRef();
+  const [address, SetAddress] = useState('') ;
 
-  const address = "";
-
-  Geocode.fromLatLng(data[i].lat, data[i].lon).then(
-    (response) => {
-        address = response.result[0].formatted_address;
-        console.log(address);
-        let city, province, country;
-        for (let j = 0; j < response.result[0].formatted_address.length; i++) {
-            for (let k = 0; k < response.results[0].address_components[i].types.length; i++) {
-                switch (response.results[0].address_components[i].types[j]) {
-                    case "locality":
-                      city = response.results[0].address_components[i].long_name;
-                      break;
-                    case "administrative_area_level_1":
-                      province = response.results[0].address_components[i].long_name;
-                      break;
-                    case "country":
-                      country = response.results[0].address_components[i].long_name;
-                      break;
-                } 
-            }
-        }
-        address = "City: " + city + ", " + "Province: " + province + ", " + "Country: " + country + ".";
-    },
-    (error) => {
-        console.log(error);
-    }
-  )
+  useEffect((address) => {
+    const link = "https://nominatim.openstreetmap.org/reverse?format=geocodejson&lat=" + data[i].lat + "&lon=" + data[i].lon;
+    axios({
+      method: "get",
+      url: link,
+    })
+    .then((response) => {
+      SetAddress(response.data.features[0].properties.geocoding.label);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }, )
 
   function handleOnSetView() {
     const { current: map } = mapRef;
-    map.setView([data[i].lat, data[i].lon], 17);
+    if (flag) map.setView([data[i].lat, data[i].lon], 17);
   }
 
   const markerIcon = new L.Icon({
@@ -140,7 +118,7 @@ export default function Homepage() {
                 .catch((error) => {
                   console.log(error);
                 });
-              if (!flag) flag = 1; 
+              flag = 1;
               handleOnSetView();
               setI(0);
             }}
@@ -151,23 +129,15 @@ export default function Homepage() {
       </p>
 
       <p className="p2">
-        <span>
-          Latitude: <span className="bold italic"> {data[i].lat} </span>{" "}
-        </span>{" "}
-        <br />
-        <span>
-          Longitude: <span className="bold italic"> {data[i].lon} </span>{" "}
-        </span>{" "}
-        <br />
-        <span>
+        <span className="address">
           Address: <span className="bold italic"> {address} </span>{" "}
         </span>{" "}
-        <br />
-        <span>
+        <br/>
+        <span className="time">
           Time:{" "}
           <span className="bold italic">
             {" "}
-            {data[i].time._seconds < 10000
+            {data[i].time._seconds > 10000
               ? formatDate(new Date(data[i].time._seconds * 1000)) +
                 " " +
                 formatTime(new Date(data[i].time._seconds * 1000))
@@ -183,7 +153,7 @@ export default function Homepage() {
           center = {[data[i].lat, data[i].lon]}
           zoom = {14}
           scrollWheelZoom = {true}
-        > {flag > 0 ? handleOnSetView() : {}}
+        > {handleOnSetView()}
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -198,7 +168,7 @@ export default function Homepage() {
             </Popup>
           </Marker>
         </MapContainer>
-        <p className="p4">Location on Google Maps</p>
+        <p className="p4">Location on Open Street Map</p>
       </div>
 
       <div className="col">
@@ -218,7 +188,7 @@ export default function Homepage() {
                 }}
               >
                 Time :{" "}
-                {data[0].time._seconds < 10000
+                {data[0].time._seconds > 10000
                   ? formatDate(new Date(data[0].time._seconds * 1000)) +
                     " " +
                     formatTime(new Date(data[0].time._seconds * 1000))
@@ -237,7 +207,7 @@ export default function Homepage() {
                 }}
               >
                 Time:{" "}
-                {data[1].time._seconds < 10000
+                {data[1].time._seconds > 10000
                   ? formatDate(new Date(data[1].time._seconds * 1000)) +
                     " " +
                     formatTime(new Date(data[1].time._seconds * 1000))
@@ -256,7 +226,7 @@ export default function Homepage() {
                 }}
               >
                 Time:{" "}
-                {data[2].time._seconds < 10000
+                {data[2].time._seconds > 10000
                   ? formatDate(new Date(data[2].time._seconds * 1000)) +
                     " " +
                     formatTime(new Date(data[2].time._seconds * 1000))
@@ -275,7 +245,7 @@ export default function Homepage() {
                 }}
               >
                 Time:{" "}
-                {data[3].time._seconds < 10000
+                {data[3].time._seconds > 10000
                   ? formatDate(new Date(data[3].time._seconds * 1000)) +
                     " " +
                     formatTime(new Date(data[3].time._seconds * 1000))
@@ -294,7 +264,7 @@ export default function Homepage() {
                 }}
               >
                 Time:{" "}
-                {data[4].time._seconds < 10000
+                {data[4].time._seconds > 10000
                   ? formatDate(new Date(data[4].time._seconds * 1000)) +
                     " " +
                     formatTime(new Date(data[4].time._seconds * 1000))
@@ -313,7 +283,7 @@ export default function Homepage() {
                 }}
               >
                 Time:{" "}
-                {data[5].time._seconds < 10000
+                {data[5].time._seconds > 10000
                   ? formatDate(new Date(data[5].time._seconds * 1000)) +
                     " " +
                     formatTime(new Date(data[5].time._seconds * 1000))
@@ -332,7 +302,7 @@ export default function Homepage() {
                 }}
               >
                 Time:{" "}
-                {data[6].time._seconds < 10000
+                {data[6].time._seconds > 10000
                   ? formatDate(new Date(data[6].time._seconds * 1000)) +
                     " " +
                     formatTime(new Date(data[6].time._seconds * 1000))

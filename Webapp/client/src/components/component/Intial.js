@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 export default function Intial () {
+
     return (
         <div>
             <div className="body">
