@@ -1,8 +1,8 @@
 #include <Arduino.h>
 
-#define TRIG_PIN 16    // Chân Trig nối với chân 8
-#define ECHO_PIN 17    // Chân Echo nối với chân 7
-#define BUZZER_PIN 19
+#define TRIG_PIN 8    // Chân Trig nối với chân 8
+#define ECHO_PIN 7    // Chân Echo nối với chân 7
+#define BUZZER_PIN 13
 #define TIME_OUT 50000 // Time_out của pulseIn là 5000 microsecond
 
 
@@ -60,19 +60,19 @@ void loop() {
     switch (warning)
     {
     case 1:
-      timeDelay=1500;
-      break;
-    case 2:
       timeDelay=1200;
       break;
-    case 3:
+    case 2:
       timeDelay=900;
       break;
-    case 4:
+    case 3:
       timeDelay=600;
       break;
-    case 5:
+    case 4:
       timeDelay=300;
+      break;
+    case 5:
+      timeDelay=150;
       break;
     default:
       break;
