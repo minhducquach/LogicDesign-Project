@@ -4,12 +4,20 @@
 #include <SoftwareSerial.h>
 #include <Firebase_ESP_Client.h>
 #include <addons/TokenHelper.h>
+// #include <TaskScheduler.h>
+
+void FirebaseGPS();
+
+// We create the Scheduler that will be in charge of managing the tasks
+// Scheduler runner;
+// We create the task indicating that it runs every 500 milliseconds, forever, and call the led_blink function
+// Task Sth(5000, TASK_FOREVER, &FirebaseGPS);
 
 static const int RXPin = 27, TXPin = 26;
 static const uint32_t GPSBaud = 9600;
 
-#define WIFI_SSID "AndroidAP"
-#define WIFI_PASSWORD "16102002"
+#define WIFI_SSID "UTS_709_IoT_2"
+#define WIFI_PASSWORD "uts709iot"
 
 #define API_KEY "AIzaSyDkRstzRmdQz6g-ij4V6lG8lw_fddBiAis"
 
@@ -100,6 +108,8 @@ void IRAM_ATTR onTimer()
   timerRun();
   portEXIT_CRITICAL_ISR(&timerMux);
 }
+
+int timer = 0;
 
 float getDistance()
 {
@@ -202,8 +212,11 @@ void loop()
       time += String(gps.time.second()) + "Z";
 
       content.set("fields/time/timestampValue", time);
-      content.set("fields/lat/stringValue", String(gps.location.lat(), 6));
-      content.set("fields/lon/stringValue", String(gps.location.lng(), 6));
+      Serial.println(time);
+      // content.set("fields/lat/stringValue", String(gps.location.lat(), 6));
+      // content.set("fields/lon/stringValue", String(gps.location.lng(), 6));
+      content.set("fields/lat/stringValue", "test");
+      content.set("fields/lon/stringValue", "test");
 
       if (timer1_flag)
       {
