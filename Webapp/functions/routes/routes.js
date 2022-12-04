@@ -2,6 +2,7 @@ const {
   // addEntry,
   // updateEntry,
   // deleteEntry,
+  deleteAll,
   getEntries,
   getFirstEntry,
 } = require("../controller/helper_functions");
@@ -15,6 +16,7 @@ router.get("/", (req, res) => {
 // router.post("/add-entry", addEntry);
 // router.post("/update-entry/:entryId", updateEntry);
 // router.post("/delete-entry/:entryId", deleteEntry);
+router.post("/delete-all", deleteAll);
 router.get("/get-entries", getEntries);
 router.get("/get-first", getFirstEntry);
 

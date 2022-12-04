@@ -87,6 +87,32 @@ let index = 0;
 //   }
 // };
 
+const deleteAll = async (req, res) => {
+  const querySnapshot = await db
+    .collection("data")
+    .orderBy("id", "desc")
+    // .limit(7)
+    .get();
+  let length = querySnapshot.size;
+  for (let entryId = 0; entryId < length; entryId++) {
+    try {
+      const entry = db.collection("entries").doc(`entry ${entryId}`);
+      await entry.delete().catch((err) => {
+        return res.status(400).json({
+          status: "error",
+          message: err.message,
+        });
+      });
+      return res.status(200).json({
+        status: "successful",
+        message: "entry deleted successfully",
+      });
+    } catch (err) {
+      return res.status(500).json(err.message);
+    }
+  }
+};
+
 const getEntries = async (req, res) => {
   try {
     let count = 0;
@@ -145,6 +171,7 @@ module.exports = {
   // addEntry,
   // updateEntry,
   // deleteEntry,
+  deleteAll,
   getEntries,
   getFirstEntry,
 };
