@@ -87,6 +87,24 @@ let index = 0;
 //   }
 // };
 
+const deleteAll = async (req, res) => {
+  try {
+    db.collection("data")
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.docs.forEach((snapshot) => {
+          snapshot.ref.delete();
+        });
+      });
+    return res.status(200).json({
+      status: "successful",
+      message: "entry deleted successfully",
+    });
+  } catch (err) {
+    return res.status(500).json(err.message);
+  }
+};
+
 const getEntries = async (req, res) => {
   try {
     let count = 0;
@@ -145,6 +163,7 @@ module.exports = {
   // addEntry,
   // updateEntry,
   // deleteEntry,
+  deleteAll,
   getEntries,
   getFirstEntry,
 };
