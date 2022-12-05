@@ -4,20 +4,12 @@
 #include <SoftwareSerial.h>
 #include <Firebase_ESP_Client.h>
 #include <addons/TokenHelper.h>
-// #include <TaskScheduler.h>
-
-void FirebaseGPS();
-
-// We create the Scheduler that will be in charge of managing the tasks
-// Scheduler runner;
-// We create the task indicating that it runs every 500 milliseconds, forever, and call the led_blink function
-// Task Sth(5000, TASK_FOREVER, &FirebaseGPS);
 
 static const int RXPin = 27, TXPin = 26;
 static const uint32_t GPSBaud = 9600;
 
-#define WIFI_SSID "UTS_709_IoT_2"
-#define WIFI_PASSWORD "uts709iot"
+#define WIFI_SSID "AndroidAP"
+#define WIFI_PASSWORD "16102002"
 
 #define API_KEY "AIzaSyDkRstzRmdQz6g-ij4V6lG8lw_fddBiAis"
 
@@ -59,6 +51,8 @@ int timer1_counter = 0;
 int timer1_flag = 0;
 int timer2_counter = 0;
 int timer2_flag = 0;
+int timer3_counter = 0;
+int timer3_flag = 0;
 
 void setTimer1(int duration)
 {
@@ -70,6 +64,12 @@ void setTimer2(int duration)
 {
   timer2_counter = duration / TIMER_CYCLE;
   timer2_flag = 0;
+}
+
+void setTimer3(int duration)
+{
+  timer3_counter = duration / TIMER_CYCLE;
+  timer3_flag = 0;
 }
 
 void timerRun()
@@ -86,6 +86,12 @@ void timerRun()
     if (timer2_counter <= 0)
       timer2_flag = 1;
   }
+  if (timer3_counter > 0)
+  {
+    timer3_counter--;
+    if (timer1_counter <= 0)
+      timer3_flag = 1;
+  }
 }
 
 void IRAM_ATTR onTimer()
@@ -94,8 +100,6 @@ void IRAM_ATTR onTimer()
   timerRun();
   portEXIT_CRITICAL_ISR(&timerMux);
 }
-
-int timer = 0;
 
 float getDistance()
 {
@@ -171,6 +175,7 @@ void setup()
   // Bắt đầu chạy Timer
   setTimer1(10);
   setTimer2(10);
+  setTimer3(10);
   timerAlarmEnable(timer);
 }
 
@@ -197,33 +202,30 @@ void loop()
       time += String(gps.time.second()) + "Z";
 
       content.set("fields/time/timestampValue", time);
-      Serial.println(time);
-      // content.set("fields/lat/stringValue", String(gps.location.lat(), 6));
-      // content.set("fields/lon/stringValue", String(gps.location.lng(), 6));
-      content.set("fields/lat/stringValue", "test");
-      content.set("fields/lon/stringValue", "test");
+      content.set("fields/lat/stringValue", String(gps.location.lat(), 6));
+      content.set("fields/lon/stringValue", String(gps.location.lng(), 6));
 
-      count++;
       if (timer1_flag)
       {
+        count++;
         if (Firebase.Firestore.createDocument(&fbdo, FIREBASE_PROJECT_ID, "" /* databaseId can be (default) or empty */, documentPath.c_str(), content.raw()))
         {
           Serial.printf("ok\n%s\n\n", fbdo.payload().c_str());
           // delay(10000);
-          setTimer1(10000);
         }
         else
-          setTimer1(10);
-      }
-      else
-      {
-        Serial.printf("payloadLength, %d\n", fbdo.payloadLength());
-        Serial.printf("maxPayloadLength, %d\n", fbdo.maxPayloadLength());
-        Serial.println(fbdo.errorReason());
+        {
+          Serial.printf("payloadLength, %d\n", fbdo.payloadLength());
+          Serial.printf("maxPayloadLength, %d\n", fbdo.maxPayloadLength());
+          Serial.println(fbdo.errorReason());
+        }
+        setTimer1(9000);
       }
     }
   }
 
+  // if (timer3_flag)
+  // {
   // gọi chương trình con getDistance
   long distance = getDistance();
 
@@ -241,8 +243,8 @@ void loop()
       timeDelay = 150;
     digitalWrite(BUZZER_PIN, HIGH);
     // Hiển thị khoảng cách đo được lên Serial Monitor
-    Serial.print("Nguy hiem! Vat can cach (cm): ");
-    Serial.println(distance);
+    // Serial.print("Nguy hiem! Vat can cach (cm): ");
+    // Serial.println(distance);
     // delay(timeDelay);
     if (timer2_flag)
     {
@@ -252,19 +254,21 @@ void loop()
   }
   else
   {
-    if (distance <= 0)
-      Serial.println("Echo time out !!"); // nếu thời gian phản hồi vượt quá Time_out của hàm pulseIn
-    else
-    {
-      // Hiển thị khoảng cách đo được lên Serial Monitor
-      Serial.print("Khoang cach toi vat can gan nhat (cm): ");
-      Serial.println(distance);
-    }
+    // if (distance <= 0)
+    //   Serial.println("Echo time out !!"); // nếu thời gian phản hồi vượt quá Time_out của hàm pulseIn
+    // else
+    // {
+    //   // Hiển thị khoảng cách đo được lên Serial Monitor
+    //   Serial.print("Khoang cach toi vat can gan nhat (cm): ");
+    //   Serial.println(distance);
+    // }
     digitalWrite(BUZZER_PIN, LOW);
     timeDelay = 750;
-    delay(timeDelay);
+    setTimer2(timeDelay);
   }
   // Chờ 1s và lặp lại chu kỳ trên
   // delay(1000);
   distanceBuffer = distance;
+  //   setTimer3(10000);
+  // }
 }
