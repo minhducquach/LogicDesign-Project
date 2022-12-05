@@ -2,6 +2,7 @@ const {
   // addEntry,
   // updateEntry,
   // deleteEntry,
+  deleteAll,
   getEntries,
   getFirstEntry,
   deleteAll,
