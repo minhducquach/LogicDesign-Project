@@ -51,8 +51,6 @@ int timer1_counter = 0;
 int timer1_flag = 0;
 int timer2_counter = 0;
 int timer2_flag = 0;
-int timer3_counter = 0;
-int timer3_flag = 0;
 
 void setTimer1(int duration)
 {
@@ -64,12 +62,6 @@ void setTimer2(int duration)
 {
   timer2_counter = duration / TIMER_CYCLE;
   timer2_flag = 0;
-}
-
-void setTimer3(int duration)
-{
-  timer3_counter = duration / TIMER_CYCLE;
-  timer3_flag = 0;
 }
 
 void timerRun()
@@ -85,12 +77,6 @@ void timerRun()
     timer2_counter--;
     if (timer2_counter <= 0)
       timer2_flag = 1;
-  }
-  if (timer3_counter > 0)
-  {
-    timer3_counter--;
-    if (timer1_counter <= 0)
-      timer3_flag = 1;
   }
 }
 
@@ -174,8 +160,7 @@ void setup()
   timerAlarmWrite(timer, 10000, true);
   // Bắt đầu chạy Timer
   setTimer1(10);
-  setTimer2(10);
-  setTimer3(10);
+  setTimer2(w0);
   timerAlarmEnable(timer);
 }
 
@@ -224,9 +209,6 @@ void loop()
     }
   }
 
-  // if (timer3_flag)
-  // {
-  // gọi chương trình con getDistance
   long distance = getDistance();
 
   if (distance > 0 && distance <= 125)
@@ -242,10 +224,7 @@ void loop()
     else
       timeDelay = 150;
     digitalWrite(BUZZER_PIN, HIGH);
-    // Hiển thị khoảng cách đo được lên Serial Monitor
-    // Serial.print("Nguy hiem! Vat can cach (cm): ");
-    // Serial.println(distance);
-    // delay(timeDelay);
+
     if (timer2_flag)
     {
       digitalWrite(BUZZER_PIN, LOW);
@@ -253,22 +232,6 @@ void loop()
     }
   }
   else
-  {
-    // if (distance <= 0)
-    //   Serial.println("Echo time out !!"); // nếu thời gian phản hồi vượt quá Time_out của hàm pulseIn
-    // else
-    // {
-    //   // Hiển thị khoảng cách đo được lên Serial Monitor
-    //   Serial.print("Khoang cach toi vat can gan nhat (cm): ");
-    //   Serial.println(distance);
-    // }
     digitalWrite(BUZZER_PIN, LOW);
-    timeDelay = 750;
-    setTimer2(timeDelay);
-  }
-  // Chờ 1s và lặp lại chu kỳ trên
-  // delay(1000);
   distanceBuffer = distance;
-  //   setTimer3(10000);
-  // }
 }

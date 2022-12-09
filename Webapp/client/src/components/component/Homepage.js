@@ -113,7 +113,7 @@ export default function Homepage() {
               })
                 .then((response) => {
                   array = response.data;
-                  if(array.length) setData(array);
+                  if(array.length == 7) setData(array);
                   else alert("No data recived");
                 })
                 .catch((error) => {
