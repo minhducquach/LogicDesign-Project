@@ -160,7 +160,7 @@ void setup()
   timerAlarmWrite(timer, 10000, true);
   // Bắt đầu chạy Timer
   setTimer1(10);
-  setTimer2(w0);
+  setTimer2(20);
   timerAlarmEnable(timer);
 }
 
