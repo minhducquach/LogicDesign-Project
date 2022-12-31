@@ -114,7 +114,7 @@ export default function Homepage() {
                 .then((response) => {
                   array = response.data;
                   if(array.length == 7) setData(array);
-                  else alert("No data recived");
+                  else alert("No data or less than 7 data received");
                 })
                 .catch((error) => {
                   console.log(error);
