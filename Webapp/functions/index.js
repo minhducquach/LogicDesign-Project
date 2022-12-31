@@ -6,10 +6,9 @@ const bodyParser = require("body-parser");
 var cors = require("cors");
 var app = express();
 
-// app.use(bodyParser)
-
 app.use(bodyParser.json());
 app.use(cors());
+
 app.use(router);
 
 exports.app = functions.https.onRequest(app);

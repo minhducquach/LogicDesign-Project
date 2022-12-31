@@ -64,9 +64,28 @@ void setTimer2(int duration)
   timer2_flag = 0;
 }
 
-void timerRun()
+// void timerRun()
+// {
+//   if (timer1_counter > 0)
+//   {
+//     timer1_counter--;
+//     if (timer1_counter <= 0)
+//       timer1_flag = 1;
+//   }
+//   if (timer2_counter > 0)
+//   {
+//     timer2_counter--;
+//     if (timer2_counter <= 0)
+//       timer2_flag = 1;
+//   }
+// }
+
+void IRAM_ATTR onTimer()
 {
-  if (timer1_counter > 0)
+  // portENTER_CRITICAL_ISR(&timerMux);
+  // timerRun();
+  // portEXIT_CRITICAL_ISR(&timerMux);
+    if (timer1_counter > 0)
   {
     timer1_counter--;
     if (timer1_counter <= 0)
@@ -78,13 +97,6 @@ void timerRun()
     if (timer2_counter <= 0)
       timer2_flag = 1;
   }
-}
-
-void IRAM_ATTR onTimer()
-{
-  portENTER_CRITICAL_ISR(&timerMux);
-  timerRun();
-  portEXIT_CRITICAL_ISR(&timerMux);
 }
 
 float getDistance()
