@@ -178,17 +178,17 @@ void loop()
     unsigned long currentMillisBuzzer = millis();
 
     if (currentMillisBuzzer - previousMillisBuzzer >= timeDelay) {
-      // save the last time you blinked the LED
+      // save the last time the buzzer's state changed
       previousMillisBuzzer = currentMillisBuzzer;
 
-      // if the LED is off turn it on and vice-versa:
+      // if the buzzer is off turn it on and vice-versa:
       if (beepState == LOW) {
         beepState = HIGH;
       } else {
         beepState = LOW;
       }
 
-      // set the LED with the beepState of the variable:
+      // set the buzzer with the beepState of the variable:
       digitalWrite(BUZZER_PIN, beepState);
     }
   }
