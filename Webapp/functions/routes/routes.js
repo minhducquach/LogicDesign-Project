@@ -1,7 +1,4 @@
 const {
-  // addEntry,
-  // updateEntry,
-  // deleteEntry,
   getEntries,
   getFirstEntry,
   deleteAll,
@@ -13,9 +10,6 @@ router.get("/", (req, res) => {
   res.status(200).send("Hey there!");
 });
 
-// router.post("/add-entry", addEntry);
-// router.post("/update-entry/:entryId", updateEntry);
-// router.post("/delete-entry/:entryId", deleteEntry);
 router.get("/delete-all", deleteAll);
 router.get("/get-entries", getEntries);
 router.get("/get-first", getFirstEntry);

@@ -1,10 +1,10 @@
 #include <Arduino.h>
 #include "TimerOne.h"
 
-#define TRIG_PIN 8 // Chân Trig nối với chân 8
-#define ECHO_PIN 7 // Chân Echo nối với chân 7
-#define BUZZER_PIN 13
-#define TIME_OUT 50000 // Time_out của pulseIn là 5000 microsecond
+#define TRIG_PIN 3 // Chân Trig nối với chân 3
+#define ECHO_PIN 2 // Chân Echo nối với chân 2
+#define BUZZER_PIN 8
+#define TIME_OUT 100000 // Time_out của pulseIn là 5000 microsecond
 #define TIMER_CYCLE 10
 
 int duty = 64;
@@ -39,45 +39,50 @@ void setup()
   pinMode(BUZZER_PIN, OUTPUT); // Set buzzer - pin 9 as an output
 }
 
+
+unsigned long previousMillisBuzzer = 0;
+unsigned long previousMillisGPS = 0;
+
+int beepState = LOW;
+
 void loop()
 {
   // gọi chương trình con getDistance
   long distance = getDistance();
-
-  if (distance > 0 && distance <= 125)
+  if (distance > 0 && distance <= 50)
   {
-    if (distance >= 100)
-      timeDelay = 1200;
-    else if (distance >= 75)
-      timeDelay = 900;
-    else if (distance >= 50)
-      timeDelay = 600;
-    else if (distance >= 25)
-      timeDelay = 300;
-    else
-      timeDelay = 150;
-    digitalWrite(BUZZER_PIN, HIGH);
-    // Hiển thị khoảng cách đo được lên Serial Monitor
     Serial.print("Nguy hiem! Vat can cach (cm): ");
     Serial.println(distance);
-    delay(timeDelay);
-    digitalWrite(BUZZER_PIN, LOW);
+    if (distance >= 50)
+      timeDelay = 800;
+    else if (distance >= 40)
+      timeDelay = 400;
+    else if (distance >= 30)
+      timeDelay = 200;
+    else if (distance >= 20)
+      timeDelay = 100;
+    else if (distance >= 10)
+      timeDelay = 100;
+    else
+      timeDelay = 25;
+
+  unsigned long currentMillisBuzzer = millis();
+
+  if (currentMillisBuzzer - previousMillisBuzzer >= timeDelay) {
+    // save the last time you blinked the LED
+    previousMillisBuzzer = currentMillisBuzzer;
+
+    // if the LED is off turn it on and vice-versa:
+    if (beepState == LOW) {
+      beepState = HIGH;
+    } else {
+      beepState = LOW;
+    }
+
+    // set the LED with the beepState of the variable:
+    digitalWrite(BUZZER_PIN, beepState);
+  }
   }
   else
-  {
-    if (distance <= 0)
-      Serial.println("Echo time out !!"); // nếu thời gian phản hồi vượt quá Time_out của hàm pulseIn
-    else
-    {
-      // Hiển thị khoảng cách đo được lên Serial Monitor
-      Serial.print("Khoang cach toi vat can gan nhat (cm): ");
-      Serial.println(distance);
-    }
     digitalWrite(BUZZER_PIN, LOW);
-    timeDelay = 750;
-    delay(timeDelay);
-  }
-  // Chờ 1s và lặp lại cu kỳ trên
-  // delay(1000);
-  distanceBuffer = distance;
 }

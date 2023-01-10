@@ -18,10 +18,10 @@ static const uint32_t GPSBaud = 9600;
 #define USER_EMAIL "samplefammember@gmail.com"
 #define USER_PASSWORD "sampleuser"
 
-#define TRIG_PIN 16 // Chân Trig nối với chân 8
-#define ECHO_PIN 17 // Chân Echo nối với chân 7
+#define TRIG_PIN 17 // Chân Trig nối với chân 17
+#define ECHO_PIN 16 // Chân Echo nối với chân 16
 #define BUZZER_PIN 19
-#define TIME_OUT 50000 // Time_out của pulseIn là 5000 microsecond
+#define TIME_OUT 50000 // Time_out của pulseIn là 50000 microsecond
 #define TIMER_CYCLE 10
 
 // Define Firebase Data object
@@ -36,56 +36,13 @@ TinyGPSPlus gps;
 // The serial connection to the GPS device
 SoftwareSerial ss(RXPin, TXPin);
 
-volatile int interrruptCounter;
-int totalInterruptCounter;
 
-hw_timer_t *timer = NULL;
-portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
+unsigned long previousMillisBuzzer = 0;
+unsigned long previousMillisGPS = 0;
 
-int count = 0;
-int duty = 64;
-int distanceBuffer = 0;
+int beepState = LOW;
 int timeDelay = 750;
-
-int timer1_counter = 0;
-int timer1_flag = 0;
-int timer2_counter = 0;
-int timer2_flag = 0;
-
-void setTimer1(int duration)
-{
-  timer1_counter = duration / TIMER_CYCLE;
-  timer1_flag = 0;
-}
-
-void setTimer2(int duration)
-{
-  timer2_counter = duration / TIMER_CYCLE;
-  timer2_flag = 0;
-}
-
-void timerRun()
-{
-  if (timer1_counter > 0)
-  {
-    timer1_counter--;
-    if (timer1_counter <= 0)
-      timer1_flag = 1;
-  }
-  if (timer2_counter > 0)
-  {
-    timer2_counter--;
-    if (timer2_counter <= 0)
-      timer2_flag = 1;
-  }
-}
-
-void IRAM_ATTR onTimer()
-{
-  portENTER_CRITICAL_ISR(&timerMux);
-  timerRun();
-  portEXIT_CRITICAL_ISR(&timerMux);
-}
+int wait = 0;           // wifi timeout
 
 float getDistance()
 {
@@ -102,7 +59,8 @@ float getDistance()
   // Tính khoảng cách
   distanceCm = duration / 29.1 / 2;
   // trả lại giá trịnh tính được
-  return distanceCm;
+  if (distanceCm <= 50 && distanceCm >= 0) return distanceCm;
+  else return -1;
 }
 
 void setup()
@@ -114,54 +72,44 @@ void setup()
   while (WiFi.status() != WL_CONNECTED)
   {
     Serial.print(".");
+    wait++;
+    if (wait == 10) break;
     delay(300);
   }
-  Serial.println();
-  Serial.print("Connected with IP: ");
-  Serial.println(WiFi.localIP());
-  Serial.println();
+  if (wait != 10 && WiFi.status() == WL_CONNECTED){
+    Serial.println();
+    Serial.print("Connected with IP: ");
+    Serial.println(WiFi.localIP());
+    Serial.println();
 
-  Serial.printf("Firebase Client v%s\n\n", FIREBASE_CLIENT_VERSION);
+    Serial.printf("Firebase Client v%s\n\n", FIREBASE_CLIENT_VERSION);
 
-  /* Assign the api key (required) */
-  config.api_key = API_KEY;
+    /* Assign the api key (required) */
+    config.api_key = API_KEY;
 
-  /* Assign the user sign in credentials */
-  auth.user.email = USER_EMAIL;
-  auth.user.password = USER_PASSWORD;
+    /* Assign the user sign in credentials */
+    auth.user.email = USER_EMAIL;
+    auth.user.password = USER_PASSWORD;
 
-  /* Assign the callback function for the long running token generation task */
-  config.token_status_callback = tokenStatusCallback; // see addons/TokenHelper.h
+    /* Assign the callback function for the long running token generation task */
+    config.token_status_callback = tokenStatusCallback; // see addons/TokenHelper.h
+
+    #if defined(ESP8266)
+    // In ESP8266 required for BearSSL rx/tx buffer for large data handle, increase Rx size as needed.
+    fbdo.setBSSLBufferSize(2048 /* Rx buffer size in bytes from 512 - 16384 */, 2048 /* Tx buffer size in bytes from 512 - 16384 */);
+    #endif
+
+    // Limit the size of response payload to be collected in FirebaseData
+    fbdo.setResponseSize(2048);
+
+    Firebase.begin(&config, &auth);
+
+    Firebase.reconnectWiFi(true);
+  }
 
   pinMode(TRIG_PIN, OUTPUT);
   pinMode(ECHO_PIN, INPUT);
-  pinMode(BUZZER_PIN, OUTPUT); // Set buzzer - pin 9 as an output
-
-#if defined(ESP8266)
-  // In ESP8266 required for BearSSL rx/tx buffer for large data handle, increase Rx size as needed.
-  fbdo.setBSSLBufferSize(2048 /* Rx buffer size in bytes from 512 - 16384 */, 2048 /* Tx buffer size in bytes from 512 - 16384 */);
-#endif
-
-  // Limit the size of response payload to be collected in FirebaseData
-  fbdo.setResponseSize(2048);
-
-  Firebase.begin(&config, &auth);
-
-  Firebase.reconnectWiFi(true);
-
-  // For sending payload callback
-  // config.cfs.upload_callback = fcsUploadCallback;
-
-  // Khởi tạo timer với chu kỳ 1us vì thạch anh của ESP32 chạy 8MHz
-  timer = timerBegin(0, 80, true);
-  // Khởi tạo hàm xử lý ngắt cho Timer
-  timerAttachInterrupt(timer, &onTimer, true);
-  // Khởi tạo hàm ngắt cho Timer là 10ms (10000 us)
-  timerAlarmWrite(timer, 10000, true);
-  // Bắt đầu chạy Timer
-  setTimer1(10);
-  setTimer2(w0);
-  timerAlarmEnable(timer);
+  pinMode(BUZZER_PIN, OUTPUT);
 }
 
 void loop()
@@ -190,13 +138,15 @@ void loop()
       content.set("fields/lat/stringValue", String(gps.location.lat(), 6));
       content.set("fields/lon/stringValue", String(gps.location.lng(), 6));
 
-      if (timer1_flag)
+      unsigned long currentMillisGPS = millis();
+
+      if (currentMillisGPS - previousMillisGPS >= 10000 || previousMillisGPS == 0)
       {
+        previousMillisGPS = currentMillisGPS;
         count++;
         if (Firebase.Firestore.createDocument(&fbdo, FIREBASE_PROJECT_ID, "" /* databaseId can be (default) or empty */, documentPath.c_str(), content.raw()))
         {
           Serial.printf("ok\n%s\n\n", fbdo.payload().c_str());
-          // delay(10000);
         }
         else
         {
@@ -204,34 +154,44 @@ void loop()
           Serial.printf("maxPayloadLength, %d\n", fbdo.maxPayloadLength());
           Serial.println(fbdo.errorReason());
         }
-        setTimer1(9000);
       }
     }
   }
 
   long distance = getDistance();
 
-  if (distance > 0 && distance <= 125)
+  if (distance > 0 && distance <= 50)
   {
-    if (distance >= 100)
-      timeDelay = 1200;
-    else if (distance >= 75)
-      timeDelay = 900;
-    else if (distance >= 50)
-      timeDelay = 600;
-    else if (distance >= 25)
-      timeDelay = 300;
+    if (distance >= 50)
+      timeDelay = 800;
+    else if (distance >= 40)
+      timeDelay = 400;
+    else if (distance >= 30)
+      timeDelay = 200;
+    else if (distance >= 20)
+      timeDelay = 100;
+    else if (distance >= 10)
+      timeDelay = 100;
     else
-      timeDelay = 150;
-    digitalWrite(BUZZER_PIN, HIGH);
+      timeDelay = 25;
 
-    if (timer2_flag)
-    {
-      digitalWrite(BUZZER_PIN, LOW);
-      setTimer2(timeDelay);
+    unsigned long currentMillisBuzzer = millis();
+
+    if (currentMillisBuzzer - previousMillisBuzzer >= timeDelay) {
+      // save the last time you blinked the LED
+      previousMillisBuzzer = currentMillisBuzzer;
+
+      // if the LED is off turn it on and vice-versa:
+      if (beepState == LOW) {
+        beepState = HIGH;
+      } else {
+        beepState = LOW;
+      }
+
+      // set the LED with the beepState of the variable:
+      digitalWrite(BUZZER_PIN, beepState);
     }
   }
   else
     digitalWrite(BUZZER_PIN, LOW);
-  distanceBuffer = distance;
 }
