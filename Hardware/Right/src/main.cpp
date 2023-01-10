@@ -36,7 +36,7 @@ void setup()
 
   pinMode(TRIG_PIN, OUTPUT);
   pinMode(ECHO_PIN, INPUT);
-  pinMode(BUZZER_PIN, OUTPUT); // Set buzzer - pin 9 as an output
+  pinMode(BUZZER_PIN, OUTPUT); // Set buzzer - pin 8 as an output
 }
 
 
