@@ -49,10 +49,9 @@ void loop()
 {
   // gọi chương trình con getDistance
   long distance = getDistance();
+
   if (distance > 0 && distance <= 50)
   {
-    Serial.print("Nguy hiem! Vat can cach (cm): ");
-    Serial.println(distance);
     if (distance >= 50)
       timeDelay = 800;
     else if (distance >= 40)
@@ -66,23 +65,24 @@ void loop()
     else
       timeDelay = 25;
 
-  unsigned long currentMillisBuzzer = millis();
+    unsigned long currentMillisBuzzer = millis();
 
-  if (currentMillisBuzzer - previousMillisBuzzer >= timeDelay) {
-    // save the last time you blinked the LED
-    previousMillisBuzzer = currentMillisBuzzer;
+    if (currentMillisBuzzer - previousMillisBuzzer >= timeDelay) {
+      // save the last time the buzzer's state changed
+      previousMillisBuzzer = currentMillisBuzzer;
 
-    // if the LED is off turn it on and vice-versa:
-    if (beepState == LOW) {
-      beepState = HIGH;
-    } else {
-      beepState = LOW;
+      // if the buzzer is off turn it on and vice-versa:
+      if (beepState == LOW) {
+        beepState = HIGH;
+      } else {
+        beepState = LOW;
+      }
+
+      // set the buzzer with the beepState of the variable:
+      digitalWrite(BUZZER_PIN, beepState);
     }
-
-    // set the LED with the beepState of the variable:
-    digitalWrite(BUZZER_PIN, beepState);
-  }
   }
   else
     digitalWrite(BUZZER_PIN, LOW);
+}
 }
