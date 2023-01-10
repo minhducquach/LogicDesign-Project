@@ -51,6 +51,8 @@ export default function Homepage() {
     },
   ];
 
+  let array1 = array;
+
   const [data, setData] = useState(array.reverse());
   const [i, setI] = useState(0);
 
@@ -112,8 +114,12 @@ export default function Homepage() {
                 url: "http://localhost:5001/logicdesign-project/us-central1/app/get-entries",
               })
                 .then((response) => {
-                  array = response.data;
-                  if(array.length == 7) setData(array);
+                  array1 = response.data;
+                  if (array1.length > 0) {
+                    if (array1.length == 7) array = array1;
+                    else for(let i = 0; i < array1.length; i++) array[i] = array1[i];
+                    setData(array);
+                  }
                   else alert("No data recived");
                 })
                 .catch((error) => {
